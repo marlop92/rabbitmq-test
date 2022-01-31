@@ -38,7 +38,7 @@ public class AmqpConfig {
 
     @Bean
     MessageListenerAdapter adapter(UserReceiver userReceiver) {
-        return new MessageListenerAdapter(userReceiver);
+        return new MessageListenerAdapter(userReceiver, "consumeUserMsg");
     }
 
     @Bean
