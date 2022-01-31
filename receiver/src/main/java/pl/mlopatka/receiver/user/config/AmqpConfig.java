@@ -5,6 +5,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -17,7 +18,7 @@ import pl.mlopatka.receiver.user.UserReceiver;
 public class AmqpConfig {
 
     private final UserConfig userConfig;
-    private static final String USERS_QUEUE = "users";
+    public static final String USERS_QUEUE = "users";
 
     @Bean
     TopicExchange usersExchange() {
@@ -36,18 +37,4 @@ public class AmqpConfig {
                 .with(userConfig.getRoutingPattern());
     }
 
-    @Bean
-    MessageListenerAdapter adapter(UserReceiver userReceiver) {
-        return new MessageListenerAdapter(userReceiver, "consumeUserMsg");
-    }
-
-    @Bean
-    SimpleMessageListenerContainer container(ConnectionFactory factory, MessageListenerAdapter adapter) {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(factory);
-        container.setQueueNames(USERS_QUEUE);
-        container.setMessageListener(adapter);
-
-        return container;
-    }
 }
